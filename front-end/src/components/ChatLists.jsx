@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
 const ChatLists = ({chats}) => {
+    const endOfMessages = useRef()
     const user = localStorage.getItem('user')
     function SenderChat ({message, username, avatar}) {
         return (
@@ -24,26 +25,34 @@ const ChatLists = ({chats}) => {
             </div>
         )
     }
+    useEffect(() => {
+        scrollToBottom()
+    }, [chats])
+
+    const scrollToBottom = () => {
+        endOfMessages.current?.scrollIntoView({behavior: "smooth"})
+    }
   return (
     <div className='chats_list'>
         {
             chats.map((chat, index) => {
-                if(chat.user === user) {
+                if(chat.username === user) {
                     return <SenderChat 
                     key={index}
                     message = {chat.message}
-                    username = {chat.user}
+                    username = {chat.username}
                     avatar = {chat.avatar}/>
                 }
                  else {
                     return <ReceiverChat 
                     key={index}
                     message = {chat.message}
-                    username = {chat.user}
+                    username = {chat.username}
                     avatar = {chat.avatar}/>
                  }
             })
         }
+        <div ref={endOfMessages}></div>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaYoutube } from "react-icons/fa6";
 import ChatLists from "./ChatLists";
 import InputText from "./InputText";
@@ -14,19 +14,24 @@ const ChatContainer = () => {
     socketio.on("chat", (chats) => {
       setChats(chats);
     });
-  });
-  const sendToSocket = (chat) => {
-    socketio.emit('chat', chat)
-  }
+
+    socketio.on('message', (msg) => {
+      setChats((prevChats) => [...prevChats, msg])
+    })
+
+    return () => {
+      socketio.off('chat')
+      socketio.off('message')
+    }
+  }, []);
 
   const addMessage = (chat) => {
     const newChat = {
-      ...chat,
-      user: localStorage.getItem("user"),
+      username: localStorage.getItem("user"),
+      message: chat,
       avatar: localStorage.getItem("avatar"),
     };
-    setChats([...chats, newChat])
-    sendToSocket([...chats, newChat])
+    socketio.emit('newMessage', newChat)
   };
 
   const Logout = () => {

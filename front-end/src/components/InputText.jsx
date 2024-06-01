@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const InputText = ({addMessage}) => {
     const [message, setMessage] = useState()
     const sendMessage = () => {
-        addMessage({message})
+        addMessage(message)
         setMessage("")
     }
   return (
@@ -14,6 +14,7 @@ const InputText = ({addMessage}) => {
         rows="6"
         placeholder="Input Message ..."
         onChange={(e) => setMessage(e.target.value)}
+        value={message}
       ></textarea>
       <button onClick={sendMessage}>Send</button>
     </div>
